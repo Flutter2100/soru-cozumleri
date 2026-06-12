@@ -1,0 +1,66 @@
+name: PDF'leri Otomatik JSON'a Çevir
+
+on:
+  push:
+    paths:
+      - '*.pdf'
+  workflow_dispatch:
+
+jobs:
+  convert-pdfs:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Repoyu indir
+        uses: actions/checkout@v4
+      
+      - name: PDF'leri JSON'a dönüştür
+        run: |
+          python3 << 'EOF'
+          import os
+          import json
+          import re
+          
+          pdf_files = [f for f in os.listdir('.') if f.lower().endswith('.pdf')]
+          print(f"📄 {len(pdf_files)} PDF dosyası bulundu")
+          
+          sorular = []
+          for idx, pdf in enumerate(pdf_files, 1):
+              soru_metni = pdf.replace('.pdf', '').replace('_', ' ').replace('-', ' ')
+              anahtar_kelimeler = re.findall(r'[A-Za-zğüşıöçĞÜŞİÖÇ]{3,}', soru_metni)
+              anahtar_kelimeler = list(dict.fromkeys(anahtar_kelimeler))
+              
+              if not anahtar_kelimeler:
+                  anahtar_kelimeler = soru_metni.split()[:5]
+              
+              sorular.append({
+                  "id": idx,
+                  "soru_metni": f"Bu sorunun çözümü için PDF'i inceleyin: {soru_metni}",
+                  "pdf_url": pdf,
+                  "anahtar_kelimeler": anahtar_kelimeler[:10]
+              })
+              print(f"  ✅ {idx}. {pdf}")
+          
+          json_data = {
+              "versiyon": "1.0",
+              "toplam_soru": len(sorular),
+              "son_guncelleme": os.popen('date -u +"%Y-%m-%dT%H:%M:%SZ"').read().strip(),
+              "sorular": sorular
+          }
+          
+          with open('sorular.json', 'w', encoding='utf-8') as f:
+              json.dump(json_data, f, ensure_ascii=False, indent=2)
+          
+          print(f"\n✅ sorular.json oluşturuldu! ({len(sorular)} soru)")
+          EOF
+      
+      - name: JSON'u kaydet
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add sorular.json
+          git commit -m "🤖 Otomatik JSON güncellemesi" || echo "Değişiklik yok"
+          git push
