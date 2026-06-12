@@ -1,4 +1,4 @@
-name: PDF'leri Otomatik JSON'a Çevir
+name: PDF'leri Otomatik JSON'a Çevir (İçerik Okuyarak)
 
 on:
   push:
@@ -17,35 +17,64 @@ jobs:
       - name: Repoyu indir
         uses: actions/checkout@v4
       
-      - name: PDF'leri JSON'a dönüştür
+      - name: PDF metin çıkarma araçlarını kur
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y poppler-utils  # PDF'ten metin çıkarmak için
+          pip3 install pypdf2  # Alternatif Python kütüphanesi
+      
+      - name: PDF'leri JSON'a dönüştür (içerik okuyarak)
         run: |
           python3 << 'EOF'
           import os
           import json
           import re
+          from PyPDF2 import PdfReader
           
           pdf_files = [f for f in os.listdir('.') if f.lower().endswith('.pdf')]
           print(f"📄 {len(pdf_files)} PDF dosyası bulundu")
           
           sorular = []
           for idx, pdf in enumerate(pdf_files, 1):
-              soru_metni = pdf.replace('.pdf', '').replace('_', ' ').replace('-', ' ')
-              anahtar_kelimeler = re.findall(r'[A-Za-zğüşıöçĞÜŞİÖÇ]{3,}', soru_metni)
-              anahtar_kelimeler = list(dict.fromkeys(anahtar_kelimeler))
+              print(f"📖 Okunuyor: {pdf}")
               
-              if not anahtar_kelimeler:
-                  anahtar_kelimeler = soru_metni.split()[:5]
+              # PDF içeriğini oku
+              pdf_metin = ""
+              try:
+                  reader = PdfReader(pdf)
+                  for page in reader.pages:
+                      metin = page.extract_text()
+                      if metin:
+                          pdf_metin += metin + " "
+                  print(f"   📝 {len(pdf_metin)} karakter okundu")
+              except Exception as e:
+                  print(f"   ⚠️ PDF okuma hatası: {e}")
+              
+              # PDF adından anahtar kelimeler
+              dosya_adi = pdf.replace('.pdf', '').replace('_', ' ')
+              anahtar_kelimeler = re.findall(r'[A-Za-zğüşıöçĞÜŞİÖÇ]{3,}', dosya_adi)
+              
+              # PDF içeriğinden de anahtar kelimeler çıkar
+              if pdf_metin:
+                  icerik_kelimeler = re.findall(r'[A-Za-zğüşıöçĞÜŞİÖÇ]{4,}', pdf_metin[:500])
+                  anahtar_kelimeler.extend(icerik_kelimeler[:5])
+              
+              anahtar_kelimeler = list(dict.fromkeys(anahtar_kelimeler))[:10]
+              
+              # İlk 500 karakteri soru metni olarak al
+              soru_metni = pdf_metin[:500] if pdf_metin else f"Bu sorunun çözümü için PDF'i inceleyin: {dosya_adi}"
               
               sorular.append({
                   "id": idx,
-                  "soru_metni": f"Bu sorunun çözümü için PDF'i inceleyin: {soru_metni}",
+                  "soru_metni": soru_metni,
                   "pdf_url": pdf,
-                  "anahtar_kelimeler": anahtar_kelimeler[:10]
+                  "anahtar_kelimeler": anahtar_kelimeler,
+                  "pdf_adi": pdf
               })
-              print(f"  ✅ {idx}. {pdf}")
+              print(f"  ✅ {idx}. {pdf} -> {len(anahtar_kelimeler)} anahtar kelime")
           
           json_data = {
-              "versiyon": "1.0",
+              "versiyon": "2.0",
               "toplam_soru": len(sorular),
               "son_guncelleme": os.popen('date -u +"%Y-%m-%dT%H:%M:%SZ"').read().strip(),
               "sorular": sorular
@@ -62,5 +91,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add sorular.json
-          git commit -m "🤖 Otomatik JSON güncellemesi" || echo "Değişiklik yok"
+          git commit -m "🤖 Otomatik JSON güncellemesi (PDF içerikli)" || echo "Değişiklik yok"
           git push
