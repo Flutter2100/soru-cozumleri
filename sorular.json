@@ -1,0 +1,61 @@
+{
+  "versiyon": "1.0",
+  "toplam_soru": 6,
+  "son_guncelleme": "2026-06-12T14:56:28Z",
+  "sorular": [
+    {
+      "id": 1,
+      "soru_metni": "Bu sorunun çözümü için PDF'i inceleyin: Test 04 BEEACACEB",
+      "pdf_url": "Test-04_BEEACACEB.pdf",
+      "anahtar_kelimeler": [
+        "Test",
+        "BEEACACEB"
+      ]
+    },
+    {
+      "id": 2,
+      "soru_metni": "Bu sorunun çözümü için PDF'i inceleyin: Test 06 CEDCA",
+      "pdf_url": "Test-06_CEDCA.pdf",
+      "anahtar_kelimeler": [
+        "Test",
+        "CEDCA"
+      ]
+    },
+    {
+      "id": 3,
+      "soru_metni": "Bu sorunun çözümü için PDF'i inceleyin: Test 01 BDACEDEBEDCBCC",
+      "pdf_url": "Test-01_BDACEDEBEDCBCC.pdf",
+      "anahtar_kelimeler": [
+        "Test",
+        "BDACEDEBEDCBCC"
+      ]
+    },
+    {
+      "id": 4,
+      "soru_metni": "Bu sorunun çözümü için PDF'i inceleyin: Test 05 ABDCAAEEAB",
+      "pdf_url": "Test-05_ABDCAAEEAB.pdf",
+      "anahtar_kelimeler": [
+        "Test",
+        "ABDCAAEEAB"
+      ]
+    },
+    {
+      "id": 5,
+      "soru_metni": "Bu sorunun çözümü için PDF'i inceleyin: Test 03 BBEDCCCBDBCBBCADCBEB",
+      "pdf_url": "Test-03_BBEDCCCBDBCBBCADCBEB.pdf",
+      "anahtar_kelimeler": [
+        "Test",
+        "BBEDCCCBDBCBBCADCBEB"
+      ]
+    },
+    {
+      "id": 6,
+      "soru_metni": "Bu sorunun çözümü için PDF'i inceleyin: Test 02 CBEDDCCADDC",
+      "pdf_url": "Test-02_CBEDDCCADDC.pdf",
+      "anahtar_kelimeler": [
+        "Test",
+        "CBEDDCCADDC"
+      ]
+    }
+  ]
+}
