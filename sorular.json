@@ -1,7 +1,7 @@
 {
   "versiyon": "1.0",
-  "toplam_soru": 6,
-  "son_guncelleme": "2026-06-12T14:56:28Z",
+  "toplam_soru": 7,
+  "son_guncelleme": "2026-06-12T14:59:32Z",
   "sorular": [
     {
       "id": 1,
@@ -50,6 +50,14 @@
     },
     {
       "id": 6,
+      "soru_metni": "Bu sorunun çözümü için PDF'i inceleyin: GnlFen001",
+      "pdf_url": "GnlFen001.pdf",
+      "anahtar_kelimeler": [
+        "GnlFen"
+      ]
+    },
+    {
+      "id": 7,
       "soru_metni": "Bu sorunun çözümü için PDF'i inceleyin: Test 02 CBEDDCCADDC",
       "pdf_url": "Test-02_CBEDDCCADDC.pdf",
       "anahtar_kelimeler": [
